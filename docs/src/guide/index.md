@@ -71,7 +71,7 @@ services:
       - '81:81'
       - '443:443'
     volumes:
-      - ./data:/data
+      - ./usr/local/share/nginxproxymanager/:/usr/local/share/nginxproxymanager/
       - ./letsencrypt:/etc/letsencrypt
 ```
 

@@ -1,0 +1,27 @@
+/usr/local/share/nginxproxymanager/logs/*_access.log /usr/local/share/nginxproxymanager/logs/*/access.log {
+    su npm npm
+    create 0644
+    weekly
+    rotate 4
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+    kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
+    endscript
+}
+
+/usr/local/share/nginxproxymanager/logs/*_error.log /usr/local/share/nginxproxymanager/logs/*/error.log {
+    su npm npm
+    create 0644
+    weekly
+    rotate 10
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+    kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
+    endscript
+}

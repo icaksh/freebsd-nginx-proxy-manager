@@ -21,8 +21,8 @@ const internalHost     = require('./host');
 
 const letsencryptStaging = config.useLetsencryptStaging();
 const letsencryptServer  = config.useLetsencryptServer();
-const letsencryptConfig  = '/etc/letsencrypt.ini';
-const certbotCommand     = 'certbot';
+const letsencryptConfig  = '/usr/local/etc/letsencrypt.ini';
+const certbotCommand     = '/usr/local/bin/certbot';
 
 function omissions() {
 	return ['is_deleted', 'owner.is_deleted'];
@@ -202,7 +202,7 @@ const internalCertificate = {
 						.then(() => {
 							// At this point, the letsencrypt cert should exist on disk.
 							// Lets get the expiry date from the file and update the row silently
-							return internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem')
+							return internalCertificate.getCertificateInfoFromFile('/usr/local/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem')
 								.then((cert_info) => {
 									return certificateModel
 										.query()
@@ -351,7 +351,7 @@ const internalCertificate = {
 				})
 				.then((certificate) => {
 					if (certificate.provider === 'letsencrypt') {
-						const zipDirectory = '/etc/letsencrypt/live/npm-' + data.id;
+						const zipDirectory = '/usr/local/etc/letsencrypt/live/npm-' + data.id;
 
 						if (!fs.existsSync(zipDirectory)) {
 							throw new error.ItemNotFoundError('Certificate ' + certificate.nice_name + ' does not exists');
@@ -515,7 +515,7 @@ const internalCertificate = {
 	writeCustomCert: (certificate) => {
 		logger.info('Writing Custom Certificate:', certificate);
 
-		const dir = '/data/custom_ssl/npm-' + certificate.id;
+		const dir = '/usr/local/share/nginxproxymanager/custom_ssl/npm-' + certificate.id;
 
 		return new Promise((resolve, reject) => {
 			if (certificate.provider === 'letsencrypt') {
@@ -864,8 +864,8 @@ const internalCertificate = {
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
 		logger.info(`Requesting Let'sEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const credentialsLocation = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
-		fs.mkdirSync('/etc/letsencrypt/credentials', { recursive: true });
+		const credentialsLocation = '/usr/local/etc/letsencrypt/credentials/credentials-' + certificate.id;
+		fs.mkdirSync('/usr/local/etc/letsencrypt/credentials', { recursive: true });
 		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, {mode: 0o600});
 
 		// Whether the plugin has a --<name>-credentials argument
@@ -933,7 +933,7 @@ const internalCertificate = {
 
 					return renewMethod(certificate)
 						.then(() => {
-							return internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem');
+							return internalCertificate.getCertificateInfoFromFile('/usr/local/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem');
 						})
 						.then((cert_info) => {
 							return certificateModel
@@ -1012,7 +1012,7 @@ const internalCertificate = {
 
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
-			const credentialsLocation = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
+			const credentialsLocation = '/usr/local/etc/letsencrypt/credentials/credentials-' + certificate.id;
 			mainCmd                   = 'AWS_CONFIG_FILE=\'' + credentialsLocation + '\' ' + mainCmd;
 		}
 
@@ -1037,13 +1037,13 @@ const internalCertificate = {
 			`--config '${letsencryptConfig}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
-			`--cert-path '/etc/letsencrypt/live/npm-${certificate.id}/fullchain.pem' ` +
+			`--cert-path '/usr/local/etc/letsencrypt/live/npm-${certificate.id}/fullchain.pem' ` +
 			'--delete-after-revoke ' +
 			(letsencryptServer !== null ? `--server '${letsencryptServer}' ` : '') +
 			(letsencryptStaging && letsencryptServer === null ? '--staging ' : '');
 
 		// Don't fail command if file does not exist
-		const delete_credentialsCmd = `rm -f '/etc/letsencrypt/credentials/credentials-${certificate.id}' || true`;
+		const delete_credentialsCmd = `rm -f '/usr/local/etc/letsencrypt/credentials/credentials-${certificate.id}' || true`;
 
 		logger.info('Command:', mainCmd + '; ' + delete_credentialsCmd);
 
@@ -1067,7 +1067,7 @@ const internalCertificate = {
 	 * @returns {Boolean}
 	 */
 	hasLetsEncryptSslCerts: (certificate) => {
-		const letsencryptPath = '/etc/letsencrypt/live/npm-' + certificate.id;
+		const letsencryptPath = '/usr/local/etc/letsencrypt/live/npm-' + certificate.id;
 
 		return fs.existsSync(letsencryptPath + '/fullchain.pem') && fs.existsSync(letsencryptPath + '/privkey.pem');
 	},
@@ -1143,7 +1143,7 @@ const internalCertificate = {
 		}
 
 		// Create a test challenge file
-		const testChallengeDir  = '/data/letsencrypt-acme-challenge/.well-known/acme-challenge';
+		const testChallengeDir  = '/usr/local/share/nginxproxymanager/letsencrypt-acme-challenge/.well-known/acme-challenge';
 		const testChallengeFile = testChallengeDir + '/test-challenge';
 		fs.mkdirSync(testChallengeDir, {recursive: true});
 		fs.writeFileSync(testChallengeFile, 'Success', {encoding: 'utf8'});

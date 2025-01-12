@@ -56,7 +56,7 @@ services:
     image: portainer/portainer
     privileged: true
     volumes:
-      - './data:/data'
+      - './usr/local/share/nginxproxymanager/:/usr/local/share/nginxproxymanager/'
       - '/var/run/docker.sock:/var/run/docker.sock'
     restart: unless-stopped
 
@@ -122,7 +122,7 @@ services:
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
-      - ./data:/data
+      - ./usr/local/share/nginxproxymanager/:/usr/local/share/nginxproxymanager/
       - ./letsencrypt:/etc/letsencrypt
     secrets:
       - MYSQL_PWD
@@ -168,20 +168,20 @@ If you are a more advanced user, you might be itching for extra Nginx customizab
 
 NPM has the ability to include different custom configuration snippets in different places.
 
-You can add your custom configuration snippet files at `/data/nginx/custom` as follow:
+You can add your custom configuration snippet files at `/usr/local/share/nginxproxymanager/nginx/custom` as follow:
 
- - `/data/nginx/custom/root_top.conf`: Included at the top of nginx.conf
- - `/data/nginx/custom/root.conf`: Included at the very end of nginx.conf
- - `/data/nginx/custom/http_top.conf`: Included at the top of the main http block
- - `/data/nginx/custom/http.conf`: Included at the end of the main http block
- - `/data/nginx/custom/events.conf`: Included at the end of the events block
- - `/data/nginx/custom/stream.conf`: Included at the end of the main stream block
- - `/data/nginx/custom/server_proxy.conf`: Included at the end of every proxy server block
- - `/data/nginx/custom/server_redirect.conf`: Included at the end of every redirection server block
- - `/data/nginx/custom/server_stream.conf`: Included at the end of every stream server block
- - `/data/nginx/custom/server_stream_tcp.conf`: Included at the end of every TCP stream server block
- - `/data/nginx/custom/server_stream_udp.conf`: Included at the end of every UDP stream server block
- - `/data/nginx/custom/server_dead.conf`: Included at the end of every 404 server block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/root_top.conf`: Included at the top of nginx.conf
+ - `/usr/local/share/nginxproxymanager/nginx/custom/root.conf`: Included at the very end of nginx.conf
+ - `/usr/local/share/nginxproxymanager/nginx/custom/http_top.conf`: Included at the top of the main http block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/http.conf`: Included at the end of the main http block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/events.conf`: Included at the end of the events block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/stream.conf`: Included at the end of the main stream block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/server_proxy.conf`: Included at the end of every proxy server block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/server_redirect.conf`: Included at the end of every redirection server block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/server_stream.conf`: Included at the end of every stream server block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/server_stream_tcp.conf`: Included at the end of every TCP stream server block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/server_stream_udp.conf`: Included at the end of every UDP stream server block
+ - `/usr/local/share/nginxproxymanager/nginx/custom/server_dead.conf`: Included at the end of every 404 server block
 
 Every file is optional.
 
@@ -210,11 +210,11 @@ You can customise the logrotate configuration through a mount (if your custom co
     - ./logrotate.custom:/etc/logrotate.d/nginx-proxy-manager
 ```
 
-For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).
+For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/base/rootfs/etc/logrotate.d/nginx-proxy-manager).
 
 ## Enabling the geoip2 module
 
-To enable the geoip2 module, you can create the custom configuration file `/data/nginx/custom/root_top.conf` and include the following snippet:
+To enable the geoip2 module, you can create the custom configuration file `/usr/local/share/nginxproxymanager/nginx/custom/root_top.conf` and include the following snippet:
 
 ```
 load_module /usr/lib/nginx/modules/ngx_http_geoip2_module.so;

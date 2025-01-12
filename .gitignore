@@ -2,8 +2,4 @@
 .idea
 ._*
 .vscode
-certbot-help.txt
-test/node_modules
 */node_modules
-docker/dev/dnsrouter-config.json.tmp
-docker/dev/resolv.conf

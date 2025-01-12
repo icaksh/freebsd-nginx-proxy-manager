@@ -1,14 +1,10 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.12.2-green.svg?style=for-the-badge">
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
+	<img src="https://img.shields.io/badge/version-2.12.3-green.svg?style=for-the-badge">
 </p>
+
+> **Maintainer Note**: I hate when I want to use an apps, I must install docker to run it, especially in another OS which is doesnt support docker. So, I modified original nginx proxy manager for FreeBSD. Long live FreeBSD!
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
@@ -39,52 +35,58 @@ so that the barrier for entry here is low.
 
 ## Hosting your home network
 
-I won't go in to too much detail here but here are the basics for someone new to this self-hosted world.
-
-1. Your home router will have a Port Forwarding section somewhere. Log in and find it
-2. Add port forwarding for port 80 and 443 to the server hosting this project
-3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS or [Amazon Route53](https://github.com/jc21/route53-ddns)
-4. Use the Nginx Proxy Manager as your gateway to forward to your other web based services
+1. Use FreeBSD
+2. Pointing your domain to your home network
+3. Use Nginx Proxy Manager
+4. Done
 
 ## Quick Setup
 
-1. Install Docker and Docker-Compose
+### Jail Configuration (Optional but Recommended)
 
-- [Docker Install documentation](https://docs.docker.com/install/)
-- [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
+Originally, the project is designed to run on jail. But, you can run it on your host machine. For example, I will use `bastille` to create a jail called `npm`. You can use `iocage` or `ezjail` or any other jail manager.
 
-2. Create a docker-compose.yml file similar to this:
-
-```yml
-services:
-  app:
-    image: 'docker.io/jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
-    volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+1. Create a jail
+```bash
+bastille create npm 14.1-RELEASE 10.0.2.1
 ```
 
-This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
+2. Configure port forwarding
+```bash
+bastille rdr npm tcp 80 80
+bastille rdr npm tcp 81 81
+bastille rdr npm tcp 443 443
+```
 
-3. Bring up your stack by running
+3. Exec to jail console
+```bash
+bastille console npm
+```
+
+### Installation
+
+You can check the script before running it to make sure it's safe for you because it will delete your existing nginx configuration and install the new one.
 
 ```bash
-docker-compose up -d
+export DISABLE_IPV6="true" # Optional
 
-# If using docker-compose-plugin
-docker compose up -d
-
+curl -fsSL https://raw.githubusercontent.com/icaksh/freebsd-nginx-proxy-manager/master/install.sh | sh
 ```
 
-4. Log in to the Admin UI
+#### Running
 
-When your docker container is running, connect to it on port `81` for the admin interface.
-Sometimes this can take a little bit because of the entropy of keys.
+1. Disable IPv6 (Optional)
+```bash
+echo 'nginxproxymanager_ipv6="NO"' >> /etc/rc.conf
+```
+
+2. Enable and start the service
+```bash
+service nginxproxymanager enable
+service nginxproxymanager start
+```
+
+3. Log in to the Admin UI
 
 [http://127.0.0.1:81](http://127.0.0.1:81)
 
@@ -98,6 +100,8 @@ Immediately after logging in with this default user you will be asked to modify 
 
 
 ## Contributing
+
+> **Maintainer Note**: I just modified the original project to run on FreeBSD. Feel free to contribute on this repo. But, if you want to contribute to the original project, you can follow the instruction below.
 
 All are welcome to create pull requests for this project, against the `develop` branch. Official releases are created from the `master` branch.
 

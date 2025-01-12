@@ -24,13 +24,13 @@ services:
     environment:
       # Uncomment this if you want to change the location of
       # the SQLite DB file within the container
-      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # DB_SQLITE_FILE: "/usr/local/share/nginxproxymanager/usr/local/share/nginxproxymanager/base.sqlite"
 
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
 
     volumes:
-      - ./data:/data
+      - ./usr/local/share/nginxproxymanager/:/usr/local/share/nginxproxymanager/
       - ./letsencrypt:/etc/letsencrypt
 ```
 
@@ -74,7 +74,7 @@ services:
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
-      - ./data:/data
+      - ./usr/local/share/nginxproxymanager/:/usr/local/share/nginxproxymanager/
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
       - db
@@ -124,7 +124,7 @@ services:
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
-      - ./data:/data
+      - ./usr/local/share/nginxproxymanager/:/usr/local/share/nginxproxymanager/
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
       - db
@@ -136,7 +136,7 @@ services:
       POSTGRES_PASSWORD: 'npmpass'
       POSTGRES_DB: 'npm'
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/usr/local/share/nginxproxymanager/
 ```
 
 ::: warning

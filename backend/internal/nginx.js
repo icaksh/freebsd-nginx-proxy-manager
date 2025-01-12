@@ -105,7 +105,7 @@ const internalNginx = {
 			logger.info('Testing Nginx configuration');
 		}
 
-		return utils.exec('/usr/sbin/nginx -t -g "error_log off;"');
+		return utils.exec('/usr/local/sbin/nginx -t -g "error_log off;"');
 	},
 
 	/**
@@ -115,7 +115,7 @@ const internalNginx = {
 		return internalNginx.test()
 			.then(() => {
 				logger.info('Reloading Nginx');
-				return utils.exec('/usr/sbin/nginx -s reload');
+				return utils.exec('/usr/local/sbin/nginx -s reload');
 			});
 	},
 
@@ -126,9 +126,9 @@ const internalNginx = {
 	 */
 	getConfigName: (host_type, host_id) => {
 		if (host_type === 'default') {
-			return '/data/nginx/default_host/site.conf';
+			return '/usr/local/share/nginxproxymanager/nginx/default_host/site.conf';
 		}
-		return '/data/nginx/' + internalNginx.getFileFriendlyHostType(host_type) + '/' + host_id + '.conf';
+		return '/usr/local/share/nginxproxymanager/nginx/' + internalNginx.getFileFriendlyHostType(host_type) + '/' + host_id + '.conf';
 	},
 
 	/**
@@ -278,7 +278,7 @@ const internalNginx = {
 
 		return new Promise((resolve, reject) => {
 			let template = null;
-			let filename = '/data/nginx/temp/letsencrypt_' + certificate.id + '.conf';
+			let filename = '/usr/local/share/nginxproxymanager/nginx/temp/letsencrypt_' + certificate.id + '.conf';
 
 			try {
 				template = fs.readFileSync(__dirname + '/../templates/letsencrypt-request.conf', {encoding: 'utf8'});
@@ -340,7 +340,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	deleteLetsEncryptRequestConfig: (certificate) => {
-		const config_file = '/data/nginx/temp/letsencrypt_' + certificate.id + '.conf';
+		const config_file = '/usr/local/share/nginxproxymanager/nginx/temp/letsencrypt_' + certificate.id + '.conf';
 		return new Promise((resolve/*, reject*/) => {
 			internalNginx.deleteFile(config_file);
 			resolve();

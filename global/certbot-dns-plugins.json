@@ -4,7 +4,7 @@
 		"package_name": "certbot-dns-acmedns",
 		"version": "~=0.1.0",
 		"dependencies": "",
-		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
+		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /usr/local/share/nginxproxymanager/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
 	"active24": {
@@ -364,7 +364,7 @@
 		"package_name": "certbot-dns-mijn-host",
 		"version": "~=0.0.4",
 		"dependencies": "",
-		"credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+		"credentials": "dns-mijn-host-credentials = /usr/local/etc/letsencrypt/mijnhost-credentials.ini",
 		"full_plugin_name": "dns-mijn-host"
 	},
 	"namecheap": {

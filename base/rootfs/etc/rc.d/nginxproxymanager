@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# PROVIDE: nginxproxymanager
+# REQUIRE: LOGIN
+# BEFORE: nginx
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="nginxproxymanager"
+rcvar=${name}_enable
+
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+restart_cmd="${name}_restart"
+
+pidfile="/var/run/nginxproxymanager.pid"
+logfile="/var/log/nginxproxymanager.log"
+errfile="/var/log/nginxproxymanager.err"
+command="/usr/local/bin/node"
+command_args="index.js --abort_on_uncaught_exception --max_old_space_size=250"
+procname="${command}"
+command_interpreter="/usr/local/bin/node"
+required_dirs="/usr/local/etc/nginxproxymanager /usr/local/share/nginxproxymanager/logs /usr/local/share/nginxproxymanager/letsencrypt-acme-challenge"
+
+load_rc_config $name
+: ${nginxproxymanager_enable:=no}
+
+nginxproxymanager_start() {
+    mkdir -p /tmp/nginx/body /usr/local/share/nginxproxymanager/letsencrypt-acme-challenge
+    if [ "$nginxproxymanager_ipv6" = "NO" ]; then
+        export DISABLE_IPV6=true
+    else
+        export DISABLE_IPV6=false
+    fi
+
+    export NODE_ENV=production
+    cd /usr/local/etc/nginxproxymanager || return 1
+    echo "Starting ${name}..."
+    ${command} ${command_args} > ${logfile} 2> ${errfile} &
+    echo $! > ${pidfile}
+}
+
+nginxproxymanager_stop() {
+    echo "Stopping ${name}..."
+    if [ -f ${pidfile} ]; then
+        kill -9 $(cat ${pidfile}) && rm -f ${pidfile}
+    else
+        pkill -9 -f ${procname}
+    fi
+}
+
+nginxproxymanager_restart() {
+    nginxproxymanager_stop
+    sleep 1
+    nginxproxymanager_start
+}
+
+run_rc_command "$1"
