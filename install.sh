@@ -73,7 +73,7 @@ npm install -g yarn
 NPM_VERSION=$(curl -L https://api.github.com/repos/icaksh/freebsd-nginx-proxy-manager/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
 curl -L https://codeload.github.com/icaksh/freebsd-nginx-proxy-manager/tar.gz/v$NPM_VERSION | tar -xz
 # git clone -b develop --single-branch https://github.com/icaksh/freebsd-nginx-proxy-manager.git $TMP_DIR/freebsd-nginx-proxy-manager-$NPM_VERSION
-TMP_DIR=/tmp/nginxproxymanager/freebsd-nginx-proxy-manager-$NPM_VERSION
+TMP_DIR=/tmp/nginxproxymanager/freebsd-nginx-proxy-manager-v$NPM_VERSION
 cd $TMP_DIR
 
 # env settings
